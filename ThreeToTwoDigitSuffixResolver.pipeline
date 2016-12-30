@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/typesystem/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/config">
+    <con:coreEntry>
+        <con:binding type="Mixed" xsi:type="con:MixedBindingType">
+            <con:request type="XML">
+                <con1:schema ref="ProcessUserAccount/Resources/XSD/GenerateAg2agIdTypes" element="GenerateAg2agIdRequest"/>
+            </con:request>
+            <con:response type="XML">
+                <con1:schema ref="ProcessUserAccount/Resources/XSD/GenerateAg2agIdTypes" element="Ag2agId"/>
+            </con:response>
+        </con:binding>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router>
+        <con:pipeline type="request" name="request-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe2">
+            <con:stage id="_StageId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe0" name="Stage1">
+                <con:context/>
+                <con:actions>
+                    <con2:assign varName="alphabets">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fac</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>'abcdefghijklmnopqrstuvwxyz'</con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="firstName">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fa9</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>fn:replace(fn:data($body/*:GenerateAg2agIdRequest/*:FirstName),'[^\w]','')</con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="lastName">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fa6</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>fn:replace(fn:data($body/*:GenerateAg2agIdRequest/*:LastName), '[^\w]', '')</con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="lastNameLength">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f9a</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>fn:string-length($lastName)</con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="firstNameLength">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f97</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>fn:string-length($firstName)</con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="allAphabets">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f48</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText>&lt;word/></con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:replace contents-only="true" varName="allAphabets">
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f45</con3:id>
+                        <con2:location>
+                            <con3:xpathText>.</con3:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con3:xqueryTransform>
+                                <con3:resource ref="ProcessUserAccount/Resources/Transformations/StringToAlphabets"/>
+                                <con3:param name="characterSequence">
+                                    <con3:path>$alphabets</con3:path>
+                                </con3:param>
+                            </con3:xqueryTransform>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fa5" name="PermuteFirstNameChars" errorHandler="error-N53ebf7df.435f1ae3.0.153fc7ee65a.N7b62">
+                <con:context/>
+                <con:actions>
+                    <con2:ifThenElse>
+                        <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f9e</con3:id>
+                        <con2:case id="_BranchId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f9d">
+                            <con2:condition>
+                                <con3:xqueryText>(xs:int($lastNameLength) + xs:int($firstNameLength)) >=  6</con3:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:ifThenElse>
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c44</con3:id>
+                                    <con2:case id="_BranchId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c43">
+                                        <con2:condition>
+                                            <con3:xqueryText>xs:int($lastNameLength) > 5</con3:xqueryText>
+                                        </con2:condition>
+                                        <con2:actions>
+                                            <con2:assign varName="lastNameEligibleCharLength">
+                                                <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c40</con3:id>
+                                                <con2:expr>
+                                                    <con3:xqueryText>5</con3:xqueryText>
+                                                </con2:expr>
+                                            </con2:assign>
+                                        </con2:actions>
+                                    </con2:case>
+                                    <con2:default>
+                                        <con2:assign varName="lastNameEligibleCharLength">
+                                            <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c3d</con3:id>
+                                            <con2:expr>
+                                                <con3:xqueryText>xs:int($lastNameLength)</con3:xqueryText>
+                                            </con2:expr>
+                                        </con2:assign>
+                                    </con2:default>
+                                </con2:ifThenElse>
+                                <con2:assign varName="firstNameEligibleCharLength">
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c69</con3:id>
+                                    <con2:expr>
+                                        <con3:xqueryText>6 - xs:int($lastNameEligibleCharLength)</con3:xqueryText>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con2:assign varName="firstNameEligibleChars">
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f4b</con3:id>
+                                    <con2:expr>
+                                        <con3:xqueryText>fn:substring($firstName, 1, xs:int($firstNameEligibleCharLength))</con3:xqueryText>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con2:assign varName="lastNameEligibleChars">
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7c3a</con3:id>
+                                    <con2:expr>
+                                        <con3:xqueryText>fn:substring($lastName, 1, xs:int($lastNameEligibleCharLength))</con3:xqueryText>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con2:assign varName="possibleAg2agids">
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f94</con3:id>
+                                    <con2:expr>
+                                        <con3:xqueryText>&lt;words/></con3:xqueryText>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con2:replace varName="possibleAg2agids" contents-only="true">
+                                    <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f86</con3:id>
+                                    <con2:location>
+                                        <con3:xpathText>.</con3:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con3:xqueryTransform>
+                                            <con3:resource ref="ProcessUserAccount/Resources/Transformations/GeneratePermutation"/>
+                                            <con3:param name="n">
+                                                <con3:path>xs:int($firstNameEligibleCharLength)</con3:path>
+                                            </con3:param>
+                                            <con3:param name="characterSequence">
+                                                <con3:path>$firstName</con3:path>
+                                            </con3:param>
+                                            <con3:param name="Prefix">
+                                                <con3:path>$lastNameEligibleChars</con3:path>
+                                            </con3:param>
+                                        </con3:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                                <con2:wsCallout>
+                                    <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7ffe</con3:id>
+                                    <con3:disabled>true</con3:disabled>
+                                    <con2:service ref="LdapSharedServices/ProxyServices/SearchUser_ps" xsi:type="ref:ProxyRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con2:operation>search</con2:operation>
+                                    <con2:request>
+                                        <con2:body wrapped="false">input</con2:body>
+                                    </con2:request>
+                                    <con2:response>
+                                        <con2:body wrapped="false">output</con2:body>
+                                    </con2:response>
+                                    <con2:requestTransform>
+                                        <con2:assign varName="input">
+                                            <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7ffb</con3:id>
+                                            <con2:expr>
+                                                <con3:xqueryText><![CDATA[<sear:searchRequest xmlns:sear="http://platform.integration.oracle/blocks/adapter/fw/metadata/SearchUser">
+   <baseDN>{dvm:lookup('ProcessUserAccount/Resources/DVM/IdmConfig', 'PropertyName', 'LdapBaseDN', 'PropertyValue', 'DEFAULT')}</baseDN>
+    <searchFilter>(&amp;(objectClass={dvm:lookup('ProcessUserAccount/Resources/DVM/IdmConfig', 'PropertyName', 'LdapSearchObjectClass', 'PropertyValue', 'DEFAULT')})(cn={fn:data($lastNameEligibleChars)}*))</searchFilter>
+</sear:searchRequest>]]></con3:xqueryText>
+                                            </con2:expr>
+                                        </con2:assign>
+                                    </con2:requestTransform>
+                                    <con2:responseTransform/>
+                                </con2:wsCallout>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:default>
+                            <con2:replace varName="word" contents-only="true">
+                                <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f91</con3:id>
+                                <con3:disabled>true</con3:disabled>
+                                <con2:location>
+                                    <con3:xpathText>.</con3:xpathText>
+                                </con2:location>
+                                <con2:expr>
+                                    <con3:xqueryText>for $i in (2 to $fistNameLength)
+return &lt;alphabet>{fn:substring($firstName, $i, 1)}&lt;/alphabet></con3:xqueryText>
+                                </con2:expr>
+                            </con2:replace>
+                            <con2:replace varName="word" contents-only="true">
+                                <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7f8e</con3:id>
+                                <con3:disabled>true</con3:disabled>
+                                <con2:location>
+                                    <con3:xpathText>.</con3:xpathText>
+                                </con2:location>
+                                <con2:expr>
+                                    <con3:xqueryText>for $alphabet in distinct-values($word/alphabet)
+order by $alphabet
+return $alphabet</con3:xqueryText>
+                                </con2:expr>
+                            </con2:replace>
+                        </con2:default>
+                    </con2:ifThenElse>
+                    <con2:assign varName="output">
+                        <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7d41</con3:id>
+                        <con2:expr>
+                            <con3:xqueryText><![CDATA[<tns:searchResponse 	xmlns="" xmlns:tns="http://platform.integration.oracle/blocks/adapter/fw/metadata/SearchUser">
+<tns:searchResultEntry><tns:cn>smithc01</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc02</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc03</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc04</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc05</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc06</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc07</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc08</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc09</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc10</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc11</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc12</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc13</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc14</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc15</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc16</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc17</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc18</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc19</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc20</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc21</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc22</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc23</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc24</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc25</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc26</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc27</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc28</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc29</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc30</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc31</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc32</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc33</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc34</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc35</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc36</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc37</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc38</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc39</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc40</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc41</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc42</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc43</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc44</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc45</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc46</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc47</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc48</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc49</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc50</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc51</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc52</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc53</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc54</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc55</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc56</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc57</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc58</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc59</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc60</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc61</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc62</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc63</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc64</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc65</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc66</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc67</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc68</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc69</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc70</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc71</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc72</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc73</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc74</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc75</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc76</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc77</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc78</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc79</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc80</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc81</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc82</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc83</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc84</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc85</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc86</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc87</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc88</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc89</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc90</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc91</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc92</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc93</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc94</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc95</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc96</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc97</tns:cn></tns:searchResultEntry>
+<tns:searchResultEntry><tns:cn>smithc98</tns:cn></tns:searchResultEntry>
+</tns:searchResponse>]]></con3:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7f69" name="CheckAvailableAg2agId">
+                <con:context/>
+                <con:actions>
+                    <con2:foreach>
+                        <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7ed2</con3:id>
+                        <con2:variable>possibleAg2agids</con2:variable>
+                        <con2:expression>
+                            <con3:xpathText>./*:word</con3:xpathText>
+                        </con2:expression>
+                        <con2:value-variable>word</con2:value-variable>
+                        <con2:index-variable>i</con2:index-variable>
+                        <con2:total-variable>counter</con2:total-variable>
+                        <con2:actions>
+                            <con2:ifThenElse>
+                                <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7ecb</con3:id>
+                                <con2:case id="_BranchId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7eca">
+                                    <con2:condition>
+                                        <con3:xqueryText>fn:not(fn:exists($output/*:searchResultEntry[*:cn = fn:data($word)])) and fn:not(fn:ends-with(fn:data($word),'00'))</con3:xqueryText>
+                                    </con2:condition>
+                                    <con2:actions>
+                                        <con2:assign varName="Ag2agId">
+                                            <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7e37</con3:id>
+                                            <con2:expr>
+                                                <con3:xqueryText>fn:data($word)</con3:xqueryText>
+                                            </con2:expr>
+                                        </con2:assign>
+                                        <con3:skip>
+                                            <con3:id>_ActionId-N53ebf7df.N3d5f9bf0.0.1540f9d1b90.N7e34</con3:id>
+                                        </con3:skip>
+                                    </con2:actions>
+                                </con2:case>
+                                <con2:default/>
+                            </con2:ifThenElse>
+                        </con2:actions>
+                    </con2:foreach>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe1"/>
+        <con:pipeline type="error" name="error-N53ebf7df.435f1ae3.0.153fc7ee65a.N7b62">
+            <con:stage id="_StageId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7b61" name="Stage1">
+                <con:context/>
+                <con:actions/>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="PipelinePairNode1">
+                <con:request>request-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe2</con:request>
+                <con:response>response-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe1</con:response>
+            </con:pipeline-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>
