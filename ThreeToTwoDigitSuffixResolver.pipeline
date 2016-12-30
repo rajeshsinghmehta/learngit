@@ -18,10 +18,10 @@
             <con:stage id="_StageId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fe0" name="Stage1">
                 <con:context/>
                 <con:actions>
-                    <con2:assign varName="alphabets">
+                    <con2:assign varName="alphabetsNew">
                         <con3:id>_ActionId-N53ebf7df.435f1ae3.0.153fc7ee65a.N7fac</con3:id>
                         <con2:expr>
-                            <con3:xqueryText>'abcdefghijklmnopqrstuvwxyz'</con3:xqueryText>
+                            <con3:xqueryText>'abcdefghijklmnopqrstuvwxyzTTT'</con3:xqueryText>
                         </con2:expr>
                     </con2:assign>
                     <con2:assign varName="firstName">
